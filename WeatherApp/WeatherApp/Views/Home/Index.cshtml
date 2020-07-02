@@ -1,0 +1,30 @@
+﻿@model IEnumerable<WeatherApp.Models.Weather>
+@{
+    //ViewData["Title"] = "Список смартфонов";
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Погоды</title>
+</head>
+<body>
+    <h3>Погоды</h3>
+    <table>
+        <tr>
+            <td>Date</td>
+            <td>T</td>
+            <td></td>
+        </tr>
+        @foreach (var Weather in Model)
+        {
+            <tr>
+                <td>@Weather.Date</td>
+                <td>@Weather.T</td>
+                <td><a href="~/Home/Buy/@Weather.ID">Купить</a></td>
+            </tr>
+        }
+    </table>
+</body>
+</html>

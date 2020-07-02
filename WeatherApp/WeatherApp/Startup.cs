@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using WeatherApp.Models;
-
 
 namespace WeatherApp
 {
@@ -27,13 +26,18 @@ namespace WeatherApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-                // получаем строку подключения из файла конфигурации
-                string connection = Configuration.GetConnectionString("DefaultConnection");
-                // добавляем контекст Context в качестве сервиса в приложение
-                services.AddDbContext<WeatherContext>(options =>
-                    options.UseSqlServer(connection));
-                //services.AddControllersWithViews();
-            
+            string connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<WeatherContext>(options => options.UseSqlServer(connection));
+            //services.AddControllersWithViews();
+
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -46,7 +50,7 @@ namespace WeatherApp
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
@@ -54,7 +58,12 @@ namespace WeatherApp
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+            });
         }
     }
 }
