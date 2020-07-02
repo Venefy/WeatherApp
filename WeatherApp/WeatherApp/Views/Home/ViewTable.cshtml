@@ -1,0 +1,74 @@
+﻿@model WeatherApp.Models.WeatherListViewModel
+@{
+    ViewData["Title"] = "Просмотр";
+    IPagedList pagedmod = Model.Weathers.ToPagedList();
+}
+@using X.PagedList.Mvc.Core; @*import this so we get our HTML Helper*@
+@using X.PagedList; @*import this so we can cast our list to IPagedList (only necessary because ViewBag is dynamic)*@
+@using X.PagedList.Mvc.Core.Fluent
+@using X.PagedList.Web.Common
+
+
+<!-- import the included stylesheet for some (very basic) default styling -->
+<link href="/css/PagedList.css" rel="stylesheet" type="text/css" />
+
+
+<form method="get">
+    <div class="form-inline form-group">
+        <label class="control-label">Имя: </label>
+        <input name="name" class="form-control" />
+
+       *<label class="control-label">Месяц: </label>
+            <select name="months" asp-items="Model.Months" class="form-control"></select>
+
+            <label class="control-label">Год: </label>
+            <select name="years" asp-items="Model.Years" class="form-control"></select>
+
+        <input type="submit" value="Фильтр" class="btn btn-default" />
+    </div>
+</form>
+
+<!-- loop through each of your products and display it however you want. we're just printing the name here -->
+<h2>List of Products</h2>
+<ul>
+    @foreach (var wew in Model.Weathers)
+    {
+        <li>@wew.T</li>
+        <li>@wew.Date</li>
+    }
+</ul>
+
+<!-- output a paging control that lets the user navigation to the previous page, next page, etc -->
+@Html.PagedListPager(pagedmod, page => Url.Action("Index", new { page }))
+
+<h3>Fluent pager</h3>
+@(Html.Pager(pagedmod)
+    .Url(page => Url.Action("Index", new { page }))
+    .Build())
+
+<h3>Pager for #85</h3>
+@(Html.Pager(pagedmod)
+    .Url(page => Url.Action("Index", new { page }))
+    .DisplayLinkToFirstPage (PagedListDisplayMode.IfNeeded)
+    .DisplayLinkToLastPage(PagedListDisplayMode.IfNeeded)
+    .DisplayLinkToPreviousPage()
+    .DisplayLinkToNextPage()
+    .MaximumPageNumbersToDisplay(3)
+    .Build())
+
+<h3> Просмотр архивов погодных условий в городе Москве</h3>
+<table>
+    <tr>
+        <td>Date</td>
+        <td>T</td>
+        <td></td>
+    </tr>
+    @foreach (var Weather in Model.Weathers)
+    {
+        <tr>
+            <td>@Weather.Date</td>
+            <td>@Weather.T</td>
+            <td><a href="~/Home/Buy/@Weather.ID">Купить</a></td>
+        </tr>
+    }
+</table>
