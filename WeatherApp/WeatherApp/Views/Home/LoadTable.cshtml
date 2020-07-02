@@ -3,8 +3,31 @@
     ViewData["Title"] = "Загрузка";
 }
 
-<h3>Выберите файлы для загрузки</h3>
-<form asp-action="AddFile" asp-controller="Home" method="post" enctype="multipart/form-data">
-    <input multiple type="file" name="uploadedFile" />
-    <input type="submit" value="Загрузить" />
+@*<h3>Выберите файлы для загрузки</h3>
+    <form asp-action="AddFile" asp-controller="Home" method="post" enctype="multipart/form-data">
+        <input multiple type="file" name="uploadedFile" />
+        <input type="submit" value="Загрузить" />
+    </form>*@
+
+@*<form enctype="multipart/form-data" method="post">
+        <dl>
+            <dt>
+                <label asp-for=""></label>
+            </dt>
+            <dd>
+                <input asp-for="" type="file">
+            </dd>
+        </dl>
+        <input asp-page-handler="AddFile" class="btn" type="submit" value="Upload">
+    </form>*@
+
+<form class="col-xs-12" method="post" action="AddNew" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <input multiple type="file" class="form-control" name="excel" />
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary col-xs-12">Add</button>
+    </div>
 </form>
