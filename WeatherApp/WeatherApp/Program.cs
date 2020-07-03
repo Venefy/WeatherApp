@@ -24,7 +24,7 @@ namespace WeatherApp
                 try
                 {
                     var context = services.GetRequiredService<WeatherContext>();
-                    SampleData.Initialize(context);
+                    //SampleData.Initialize(context);
                 }
                 catch (Exception ex)
                 {

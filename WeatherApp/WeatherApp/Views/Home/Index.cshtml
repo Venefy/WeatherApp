@@ -1,22 +1,7 @@
-﻿@model IEnumerable<WeatherApp.Models.Weather>
+﻿
 @{
-    ViewData["Title"] = "погодочки";
+    ViewData["Title"] = "Погода";
 }
 
-<h3>Погоды</h3>
-
-<table>
-    <tr>
-        <td>Date</td>
-        <td>T</td>
-        <td></td>
-    </tr>
-    @foreach (var Weather in Model)
-    {
-        <tr>
-            <td>@Weather.Date</td>
-            <td>@Weather.T</td>
-            <td><a href="~/Home/Buy/@Weather.ID">Купить</a></td>
-        </tr>
-    }
-</table>
+<h3>Главная</h3>
+Данное приложение позволит Вам просмотреть архивы погодных условий в городе Москве. И при желании загрузить свои данные.
