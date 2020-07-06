@@ -2,22 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WeatherApp.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Data.OracleClient;
 using NPOI.SS.UserModel;
 using Microsoft.AspNetCore.Http;
 using NPOI.XSSF.UserModel;
 using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using X.PagedList;
-using FormCollection = Microsoft.AspNetCore.Http.FormCollection;
-using System.Windows;
+using System.Linq;
 
 namespace WeatherApp.Controllers
 {
@@ -38,14 +30,14 @@ namespace WeatherApp.Controllers
             return View();
         }
 
-        protected IPagedList<Weather> GetPagedNames(int? page, List<Weather> weathers)
+        protected IPagedList<Weather> GetPagedNames(int? page, List<Weather> WeathersQ)
         {
             // return a 404 if user browses to before the first page
             if (page.HasValue && page < 1)
                 return null;
 
             // retrieve list from database/whereverand
-            var listUnpaged = weathers.AsEnumerable().ToList();
+            var listUnpaged = WeathersQ.AsEnumerable().ToList();
 
             // page the list
             const int pageSize = 7;
@@ -61,23 +53,22 @@ namespace WeatherApp.Controllers
      
             [HttpGet]
         public IActionResult ViewTable(int? page, WeatherListViewModel wew)
-        {
-            
-            IQueryable<Weather> weathers = db.Weathers.OrderBy(s => s.Date);
+        {            
+            IQueryable<Weather> WeathersQ = db.Weathers.OrderBy(s => s.Date);
             if (wew.month != null && wew.year != null)
             {
-                weathers = db.Weathers.Where(p => p.Month == wew.month);
-                weathers = weathers.Where(p => p.Year == wew.year);
+                WeathersQ = db.Weathers.Where(p => p.Month == wew.month);
+                WeathersQ = WeathersQ.Where(p => p.Year == wew.year);
             }
             if (wew.month == null && wew.year != null)
             {
-                weathers = db.Weathers.Where(p => p.Year == wew.year);
+                WeathersQ = db.Weathers.Where(p => p.Year == wew.year);
             }
             if (wew.month != null && wew.year == null)
             {
-                MessageBox.Show("Ошибка. Введите год");
+                TempData["msg"] = "<script>alert('Введите год');</script>";
             }
-            var result = weathers.ToList();
+            var result = WeathersQ.ToList();
 
 
             ViewBag.Weathers1 = GetPagedNames(page, result);
@@ -92,7 +83,7 @@ namespace WeatherApp.Controllers
 
             WeatherListViewModel viewModel = new WeatherListViewModel
             {
-                Weathers = weathers,
+                Weathers = WeathersQ,
                 Months = wew.Months,
                 Years = wew.Years
             };
@@ -101,49 +92,49 @@ namespace WeatherApp.Controllers
 
         
 
-        public static void CreateWew(IRow curRow)
+        public static void CreateWeather(IRow curRow)
         {
 
             string date = curRow.GetCell(0).StringCellValue;
             date += " " + curRow.GetCell(1).StringCellValue;
 
-            Weather wew1 = new Weather
+            Weather weather1 = new Weather
             {
                 Date = Convert.ToDateTime(date)
             };
-            wew1.Month = wew1.getMonth();
-            wew1.Year = wew1.getYear();
-            wew1.T = Convert.ToDouble(curRow.GetCell(2).NumericCellValue, CultureInfo.InvariantCulture);
-            wew1.Humidity = Convert.ToDouble(curRow.GetCell(3).NumericCellValue, CultureInfo.InvariantCulture);
-            wew1.Td = Convert.ToDouble(curRow.GetCell(4).NumericCellValue, CultureInfo.InvariantCulture);
-            wew1.AtmoPress = curRow.GetCell(5).NumericCellValue;
-            wew1.Wind = curRow.GetCell(6).ToString();
+           weather1.Month =weather1.getMonth();
+           weather1.Year =weather1.getYear();
+           weather1.T = Convert.ToDouble(curRow.GetCell(2).NumericCellValue, CultureInfo.InvariantCulture);
+           weather1.Humidity = Convert.ToDouble(curRow.GetCell(3).NumericCellValue, CultureInfo.InvariantCulture);
+           weather1.Td = Convert.ToDouble(curRow.GetCell(4).NumericCellValue, CultureInfo.InvariantCulture);
+           weather1.AtmoPress = curRow.GetCell(5).NumericCellValue;
+           weather1.Wind = curRow.GetCell(6).ToString();
             if (curRow.GetCell(7).CellType == CellType.String) { }
             if (curRow.GetCell(7).CellType == CellType.Numeric)
             {
-                wew1.WindSpeed = curRow.GetCell(7).NumericCellValue;
+               weather1.WindSpeed = curRow.GetCell(7).NumericCellValue;
             }
             if (curRow.GetCell(8).CellType == CellType.String) { }
             if (curRow.GetCell(8).CellType == CellType.Numeric)
             {
-                wew1.Clouds = curRow.GetCell(8).NumericCellValue;
+               weather1.Clouds = curRow.GetCell(8).NumericCellValue;
             }
             if (curRow.GetCell(9).CellType == CellType.String) { }
             if (curRow.GetCell(9).CellType == CellType.Numeric)
             {
-                wew1.h = curRow.GetCell(9).NumericCellValue;
+               weather1.h = curRow.GetCell(9).NumericCellValue;
             }
             if (curRow.GetCell(10).CellType == CellType.String) { }
             if (curRow.GetCell(10).CellType == CellType.Numeric)
             {
-                wew1.VV = curRow.GetCell(10).NumericCellValue;
+               weather1.VV = curRow.GetCell(10).NumericCellValue;
             }
             //MessageBox.Show(curRow.LastCellNum.ToString());
             if (curRow.LastCellNum == 12)
             {
-                wew1.Other = curRow.GetCell(11).ToString();
+               weather1.Other = curRow.GetCell(11).ToString();
             }
-            db.Weathers.Add(wew1);
+            db.Weathers.Add(weather1);
             
         }
 
@@ -155,7 +146,7 @@ namespace WeatherApp.Controllers
                 if(uploadedFile != null)
                 {
                     string excelName = Guid.NewGuid().ToString() + Path.GetExtension(uploadedFile.FileName);
-                    string SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", excelName);
+                    string SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/files", excelName);
 
                     using (var stream = new FileStream(SavePath, FileMode.Create))
                     {
@@ -174,7 +165,7 @@ namespace WeatherApp.Controllers
                                 for (int row = 4; row <= sheet.LastRowNum; row++)
                                 {
                                     var curRow = sheet.GetRow(row);
-                                    CreateWew(curRow);
+                                    CreateWeather(curRow);
                                 }
 
                             }
@@ -182,20 +173,19 @@ namespace WeatherApp.Controllers
                             ViewBag.Message += "\t Таблицы из файла " + uploadedFile.FileName + " успешно загружены.   \n";
 
                         }
-                        catch (Exception ex)
+                        catch 
                         {
-                            MessageBox.Show(ex.ToString());
+                            TempData["msg"] = "<script>alert('Неверный файл');</script>";
                             ViewBag.Message += "\t Неверный файл \n";
+                            break;
                         }
                     }
-
 
                 }
             }
             return View();
         }
 
-       
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

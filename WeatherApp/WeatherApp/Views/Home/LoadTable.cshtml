@@ -2,9 +2,10 @@
 @{
     ViewData["Title"] = "Загрузка";
 }
-
-<h3>Выберите файлы для загрузки</h3>
+<h3> Загрузка архивов погодных условий в городе Москве</h3>
 <br />
+<br />
+<h4>Выберите файлы для загрузки</h4>
 <form class="col-xs-12" method="post" action="LoadTable" enctype="multipart/form-data">
 
     <div class="form-group">
@@ -14,9 +15,9 @@
     <div class="form-group">
         <button type="submit" class="btn btn-primary col-xs-12">Загрузить</button>
     </div>
-    <br />
-    <h5>@ViewBag.Message</h5>
-    <br />
+    <br>
+    @Html.Raw(TempData["msg"])
+    <h4>@ViewBag.Message</h4>
     <br />
 </form>
 <br />

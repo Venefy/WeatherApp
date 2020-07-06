@@ -8,13 +8,13 @@
 @using X.PagedList.Mvc.Core.Fluent
 @using X.PagedList.Web.Common
 
-    
-        <style type="text/css">
-            .centerText {
-                text-align: center;
-            }
-        </style>
-    
+
+<style type="text/css">
+    .centerText {
+        text-align: center;
+    }
+</style>
+
 <link href="/css/PagedList.css" rel="stylesheet" type="text/css" />
 
 <form method="get">
@@ -37,6 +37,7 @@
     </div>
 </form>
 
+@Html.Raw(TempData["msg"])
 <!-- loop through each of your products and display it however you want.we're just printing the name here -->
 <h3> Просмотр архивов погодных условий в городе Москве</h3>
 
